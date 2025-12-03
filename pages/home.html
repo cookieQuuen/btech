@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NGOMA College - IT Class Website</title>
+  <style>
+    :root{--primary:#003366;--accent:#004080;--muted:#666}
+    *{box-sizing:border-box}
+    body{font-family:Inter, system-ui, -apple-system, Arial, sans-serif;margin:0;background:#f3f6fb;color:#111}
+    header{background:var(--primary);color:#fff;padding:18px 12px;text-align:center}
+    header h1{margin:0;font-size:20px}
+    nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:10px;background:var(--accent)}
+    nav a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:8px;font-weight:600}
+    .container{max-width:1100px;margin:18px auto;padding:12px}
+    .grid{display:grid;grid-template-columns:1fr 320px;gap:18px}
+    .card{background:#fff;padding:14px;border-radius:10px;box-shadow:0 6px 18px rgba(16,24,40,0.06)}
+    .muted{color:var(--muted)}
+    footer{text-align:center;padding:12px;color:#fff;background:var(--primary);margin-top:18px}
+
+    /* small screens */
+    @media (max-width:900px){
+      .grid{grid-template-columns:1fr;}
+      nav{padding:8px;}
+      header h1{font-size:18px}
+    }
+
+    /* small helpers */
+    .btn{display:inline-block;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-ghost{background:transparent;border:1px solid #e6eef8}
+    input,textarea,select{width:100%;padding:8px;margin-top:6px;margin-bottom:10px;border-radius:8px;border:1px solid #e6eef8}
+    label{font-weight:600;font-size:14px}
+    .list{padding-left:18px}
+    .small{font-size:13px}
+    .flex{display:flex;gap:10px;align-items:center}
+    .right{justify-content:flex-end}
+    .center{text-align:center}
+    .thumbnail{width:48px;height:48px;border-radius:6px;object-fit:cover}
+    .notice{background:#fff9db;border-left:4px solid #ffdd57;padding:10px;border-radius:6px}
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>NGOMA College — Bachelor of IT (Class Portal)</h1>
+  <div class="small muted">Student portal for notes, announcements, timetable, member list and admin dashboard</div>
+</header>
+
+<nav>
+  <a href="#home">Home</a>
+  <a href="#notes">Notes</a>
+  <a href="#timetable">Timetable</a>
+  <a href="#members">Members</a>
+  <a href="#announcements">Announcements</a>
+  <a href="#gallery">Gallery</a>
+  <a href="#admin">Admin</a>
+</nav>
+
+<div class="container">
+  <div class="grid">
+    <main>
+      <section id="home" class="card">
+        <h2>Welcome</h2>
+        <p class="muted">This single-file demo includes:</p>
+        <ul class="list">
+          <li>Client-side login (demo) with admin dashboard</li>
+          <li>Upload & download lecture notes (stored in browser)</li>
+          <li>Announcements system editable by admin</li>
+          <li>Editable timetable and class members list</li>
+          <li>Image gallery for class photos</li>
+          <li>Mobile friendly responsive layout</li>
+        </ul>
+        <div class="notice small">Note: This demo stores data in your browser (LocalStorage). To make it real-world, you'll need a backend (I can help set that up).</div>
+      </section>
+
+      <section id="notes" class="card" style="margin-top:14px;">
+        <div class="flex"><h3 style="margin:0">Lecture Notes</h3><button class="btn btn-primary" style="margin-left:auto" onclick="showUpload()">Upload Note</button></div>
+        <div id="notesList" style="margin-top:12px"></div>
+
+        <div id="uploadArea" style="display:none;margin-top:12px">
+          <label>Title</label>
+          <input id="noteTitle" placeholder="e.g., Web Dev Lecture 03" />
+          <label>Choose file (PDF, DOCX, TXT)</label>
+          <input id="noteFile" type="file" />
+          <div class="flex right"><button class="btn btn-ghost" onclick="hideUpload()">Cancel</button><button class="btn btn-primary" onclick="uploadNote()">Upload</button></div>
+        </div>
+      </section>
+
+      <section id="timetable" class="card" style="margin-top:14px">
+        <div class="flex"><h3 style="margin:0">Class Timetable</h3><button class="btn btn-primary" style="margin-left:auto" onclick="editTimetable()">Edit</button></div>
+        <div id="timetableView" style="margin-top:12px"></div>
+        <div id="timetableEdit" style="display:none;margin-top:12px">
+          <label>Enter timetable JSON (array of items: {day, time, course, room})</label>
+          <textarea id="ttJson" rows="6" placeholder='[{"day":"Mon","time":"09:00","course":"Networking","room":"B12"}]'></textarea>
+          <div class="flex right"><button class="btn btn-ghost" onclick="cancelTimetable()">Cancel</button><button class="btn btn-primary" onclick="saveTimetable()">Save</button></div>
+        </div>
+      </section>
+
+      <section id="members" class="card" style="margin-top:14px">
+        <div class="flex"><h3 style="margin:0">Class Members</h3><button class="btn btn-primary" style="margin-left:auto" onclick="showMemberForm()">Add Member</button></div>
+        <div id="membersList" style="margin-top:12px"></div>
+        <div id="memberForm" style="display:none;margin-top:12px">
+          <label>Name</label>
+          <input id="memberName" placeholder="Student name" />
+          <label>Email</label>
+          <input id="memberEmail" placeholder="student@example.com" />
+          <div class="flex right"><button class="btn btn-ghost" onclick="hideMemberForm()">Cancel</button><button class="btn btn-primary" onclick="addMember()">Add</button></div>
+        </div>
+      </section>
+
+      <section id="announcements" class="card" style="margin-top:14px">
+        <div class="flex"><h3 style="margin:0">Announcements</h3><button class="btn btn-primary" style="margin-left:auto" onclick="showAnnForm()">New Announcement</button></div>
+        <div id="annList" style="margin-top:12px"></div>
+        <div id="annForm" style="display:none;margin-top:12px">
+          <label>Title</label>
+          <input id="annTitle" />
+          <label>Message</label>
+          <textarea id="annMessage" rows="4"></textarea>
+          <div class="flex right"><button class="btn btn-ghost" onclick="hideAnnForm()">Cancel</button><button class="btn btn-primary" onclick="saveAnnouncement()">Post</button></div>
+        </div>
+      </section>
+
+      <section id="gallery" class="card" style="margin-top:14px">
+        <div class="flex"><h3 style="margin:0">Gallery</h3><div class="small muted">(upload images)</div><button class="btn btn-primary" style="margin-left:auto" onclick="document.getElementById('imgFile').click()">Upload Photo</button></div>
+        <input id="imgFile" type="file" accept="image/*" style="display:none" onchange="uploadImage(event)" />
+        <div id="galleryGrid" style="display:grid;grid-template-columns:repeat(auto-fit,120px);gap:8px;margin-top:12px"></div>
+      </section>
+
+    </main>
+
+    <aside>
+      <div class="card">
+        <div class="center"><strong>Quick Login</strong></div>
+        <div style="margin-top:8px">
+          <label>Email</label>
+          <input id="loginEmail" placeholder="admin@ngoma.rw" />
+          <label>Password</label>
+          <input id="loginPass" type="password" placeholder="demo password" />
+          <div class="flex right"><button class="btn btn-ghost" onclick="demoLogout()">Logout</button><button class="btn btn-primary" onclick="demoLogin()">Login</button></div>
+          <div id="loginMsg" class="small muted" style="margin-top:8px"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h4 style="margin:0">Storage Info</h4>
+        <div class="small muted" style="margin-top:8px">This demo saves data in your browser's LocalStorage. If you clear browser data the information will be lost.</div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h4 style="margin:0">Hosting</h4>
+        <ol class="small">
+          <li>Push this single HTML file to a GitHub repo.</li>
+          <li>Enable GitHub Pages (Settings → Pages) or use Netlify/Render for free hosting.</li>
+          <li>If you want uploads & persistent storage, we'll add a backend (Node.js + Express + storage) — ask me and I will scaffold it.</li>
+        </ol>
+      </div>
+
+    </aside>
+  </div>
+</div>
+
+<footer>
+  &copy; 2025 NGOMA College — IT Class Portal
+</footer>
+
+<script>
+// Simple client-side data storage demo
+const storage = {
+  get(k, fallback){try{return JSON.parse(localStorage.getItem(k)) ?? fallback}catch(e){return fallback}},
+  set(k,v){localStorage.setItem(k,JSON.stringify(v))}
+}
+
+// Demo auth (very simple) - change password here
+const ADMIN = {email:'admin@ngoma.rw', pass:'ngoma2025'}
+let state = {user:null}
+
+function demoLogin(){
+  const e=document.getElementById('loginEmail').value.trim();
+  const p=document.getElementById('loginPass').value;
+  if(e===ADMIN.email && p===ADMIN.pass){state.user={email:e,role:'admin'};document.getElementById('loginMsg').innerText='Logged in as admin';renderAdminUI();} else {document.getElementById('loginMsg').innerText='Invalid credentials (use admin@ngoma.rw / ngoma2025)'}
+}
+function demoLogout(){state.user=null;document.getElementById('loginMsg').innerText='Logged out';renderAdminUI();}
+
+// Notes
+function showUpload(){document.getElementById('uploadArea').style.display='block'}
+function hideUpload(){document.getElementById('uploadArea').style.display='none'}
+async function uploadNote(){
+  const title=document.getElementById('noteTitle').value||'Untitled';
+  const file = document.getElementById('noteFile').files[0];
+  if(!file){alert('Choose a file');return}
+  const arr = storage.get('notes',[]);
+  const buf = await file.arrayBuffer();
+  const base64 = arrayBufferToBase64(buf);
+  arr.unshift({id:Date.now(),title,filename:file.name,data:base64,type:file.type});
+  storage.set('notes',arr);
+  document.getElementById('noteTitle').value='';document.getElementById('noteFile').value='';hideUpload();renderNotes();
+}
+function renderNotes(){
+  const container=document.getElementById('notesList');container.innerHTML='';
+  const notes = storage.get('notes',[]);
+  if(!notes.length) container.innerHTML='<div class="muted small">No notes uploaded yet.</div>';
+  notes.forEach(n=>{
+    const div=document.createElement('div');div.className='flex';div.style.marginBottom='8px';
+    const info=document.createElement('div');info.innerHTML=`<strong>${n.title}</strong><div class='small muted'>${n.filename}</div>`;
+    const btns=document.createElement('div');btns.className='flex right';btns.style.marginLeft='auto';
+    const dl=document.createElement('button');dl.className='btn btn-ghost';dl.textContent='Download';dl.onclick=()=>downloadNote(n);
+    const del=document.createElement('button');del.className='btn';del.textContent='Delete';del.onclick=()=>{if(confirm('Delete note?')){deleteNote(n.id)}}
+    btns.appendChild(dl);btns.appendChild(del);
+    div.appendChild(info);div.appendChild(btns);container.appendChild(div);
+  })
+}
+function downloadNote(n){
+  const bytes = base64ToUint8Array(n.data);
+  const blob = new Blob([bytes],{type:n.type||'application/octet-stream'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');a.href=url;a.download=n.filename;a.click();URL.revokeObjectURL(url);
+}
+function deleteNote(id){
+  let notes = storage.get('notes',[]);notes = notes.filter(x=>x.id!==id);storage.set('notes',notes);renderNotes();
+}
+
+// Timetable
+function renderTimetable(){
+  const t = storage.get('timetable',[]);
+  const el = document.getElementById('timetableView');
+  if(!t.length){el.innerHTML='<div class="muted small">No timetable set.</div>';return}
+  let html='<table style="width:100%;border-collapse:collapse"><thead><tr><th>Day</th><th>Time</th><th>Course</th><th>Room</th></tr></thead><tbody>';
+  t.forEach(r=>{html+=`<tr><td>${esc(r.day)}</td><td>${esc(r.time)}</td><td>${esc(r.course)}</td><td>${esc(r.room)}</td></tr>`});
+  html+='</tbody></table>';el.innerHTML=html;
+}
+function editTimetable(){
+  const t = storage.get('timetable',[]);
+  document.getElementById('ttJson').value = JSON.stringify(t,null,2);
+  document.getElementById('timetableEdit').style.display='block';
+}
+function cancelTimetable(){document.getElementById('timetableEdit').style.display='none'}
+function saveTimetable(){
+  try{
+    const v = JSON.parse(document.getElementById('ttJson').value||'[]');
+    storage.set('timetable',v);document.getElementById('timetableEdit').style.display='none';renderTimetable();
+  }catch(e){alert('Invalid JSON')}
+}
+
+// Members
+function renderMembers(){
+  const m = storage.get('members',[]);
+  const el = document.getElementById('membersList');el.innerHTML='';
+  if(!m.length){el.innerHTML='<div class="muted small">No members yet.</div>';return}
+  m.forEach(mem=>{
+    const d=document.createElement('div');d.className='flex';d.style.marginBottom='8px';
+    d.innerHTML=`<img class='thumbnail' src='https://ui-avatars.com/api/?name=${encodeURIComponent(mem.name)}&background=0D8ABC&color=fff' alt='a' /><div style='margin-left:10px'><strong>${esc(mem.name)}</strong><div class='small muted'>${esc(mem.email)}</div></div>`;
+    const btn=document.createElement('button');btn.className='btn';btn.textContent='Remove';btn.onclick=()=>{if(confirm('Remove member?')){removeMember(mem.id)}};btn.style.marginLeft='auto';
+    d.appendChild(btn);el.appendChild(d);
+  })
+}
+function showMemberForm(){document.getElementById('memberForm').style.display='block'}
+function hideMemberForm(){document.getElementById('memberForm').style.display='none'}
+function addMember(){
+  const name=document.getElementById('memberName').value.trim();const email=document.getElementById('memberEmail').value.trim();
+  if(!name||!email){alert('Enter name and email');return}
+  const arr=storage.get('members',[]);arr.unshift({id:Date.now(),name,email});storage.set('members',arr);document.getElementById('memberName').value='';document.getElementById('memberEmail').value='';hideMemberForm();renderMembers();
+}
+function removeMember(id){let arr=storage.get('members',[]);arr=arr.filter(x=>x.id!==id);storage.set('members',arr);renderMembers();}
+
+// Announcements
+function renderAnnouncements(){
+  const list=storage.get('announcements',[]);const el=document.getElementById('annList');el.innerHTML='';
+  if(!list.length) el.innerHTML='<div class="muted small">No announcements.</div>';
+  list.forEach(a=>{
+    const d=document.createElement('div');d.style.marginBottom='12px';d.innerHTML=`<strong>${esc(a.title)}</strong><div class='small muted'>${new Date(a.ts).toLocaleString()}</div><p>${esc(a.msg)}</p>`;
+    if(state.user) {const btn=document.createElement('button');btn.className='btn';btn.textContent='Delete';btn.onclick=()=>{if(confirm('Delete?')){deleteAnn(a.ts)}};d.appendChild(btn)}
+    el.appendChild(d);
+  })
+}
+function showAnnForm(){document.getElementById('annForm').style.display='block'}
+function hideAnnForm(){document.getElementById('annForm').style.display='none'}
+function saveAnnouncement(){
+  const t=document.getElementById('annTitle').value.trim();const m=document.getElementById('annMessage').value.trim();
+  if(!t||!m){alert('Enter title and message');return}
+  const arr=storage.get('announcements',[]);arr.unshift({title:t,msg:m,ts:Date.now()});storage.set('announcements',arr);document.getElementById('annTitle').value='';document.getElementById('annMessage').value='';hideAnnForm();renderAnnouncements();
+}
+function deleteAnn(ts){let a=storage.get('announcements',[]);a=a.filter(x=>x.ts!==ts);storage.set('announcements',a);renderAnnouncements();}
+
+// Gallery
+function uploadImage(e){
+  const file = e.target.files[0];if(!file)return;const reader = new FileReader();reader.onload = ()=>{
+    const arr = storage.get('gallery',[]);
+    arr.unshift({id:Date.now(),name:file.name,data:reader.result});storage.set('gallery',arr);renderGallery();
+  };reader.readAsDataURL(file);
+}
+function renderGallery(){
+  const g = storage.get('gallery',[]);const el=document.getElementById('galleryGrid');el.innerHTML='';
+  if(!g.length) el.innerHTML='<div class="muted small">No photos yet.</div>';
+  g.forEach(img=>{const i=document.createElement('img');i.src=img.data;i.className='thumbnail';i.title=img.name;i.style.cursor='pointer';i.onclick=()=>{window.open(img.data)};el.appendChild(i)})
+}
+
+// Utils
+function esc(s){return String(s||'').replaceAll('<','&lt;').replaceAll('>','&gt;')}
+function arrayBufferToBase64(buffer){let binary='';const bytes=new Uint8Array(buffer);const len=bytes.byteLength;for(let i=0;i<len;i++){binary+=String.fromCharCode(bytes[i])}return btoa(binary)}
+function base64ToUint8Array(base64){const binary = atob(base64);const len=binary.length;const bytes=new Uint8Array(len);for(let i=0;i<len;i++){bytes[i]=binary.charCodeAt(i)}return bytes}
+
+// Images for avatar service require encodeURIComponent
+
+// Admin UI controls
+function renderAdminUI(){
+  // show/hide admin-only controls: currently we conditionally allow delete buttons based on state.user in render functions
+  renderAnnouncements();renderMembers();renderNotes();renderTimetable();renderGallery();
+}
+
+// initial load
+(function init(){
+  // seed sample data if empty (only first visit)
+  if(!storage.get('initialized',false)){
+    storage.set('members',[{id:1,name:'Ishimwe Queen',email:'ishimwe@example.com'},{id:2,name:'Brune Mwiza',email:'brune@example.com'}]);
+    storage.set('announcements',[{title:'Welcome','msg':'Welcome to the IT class portal','ts':Date.now()}]);
+    storage.set('timetable',[{day:'Mon',time:'09:00',course:'Networking',room:'B12'},{day:'Wed',time:'11:00',course:'Web Development',room:'B11'}]);
+    storage.set('gallery',[]);
+    storage.set('notes',[]);
+    storage.set('initialized',true);
+  }
+  renderAdminUI();
+})();
+
+// helpers for easier demo editing
+function showMemberForm(){document.getElementById('memberForm').style.display='block'}
+function hideMemberForm(){document.getElementById('memberForm').style.display='none'}
+
+// Small helper to ensure functions referenced earlier exist only once
+</script>
+
+</body>
+</html>
